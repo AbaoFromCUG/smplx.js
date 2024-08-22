@@ -12,18 +12,16 @@
             "displayName": "Base Configuration",
             "description": "Default build using Ninja generator",
             "generator": "Ninja",
-            "binaryDir": "build/${presetName}",
-            "toolchainFile": "/usr/lib/emscripten/cmake/Modules/Platform/Emscripten.cmake",
-            "cacheVariables": {
-                "CMAKE_CROSSCOMPILING_EMULATOR": "/usr/bin/node"
-            }
+            "binaryDir": "build/${presetName}"
         },
         {
             "name": "debug",
             "displayName": "Config Debug",
             "description": "Sets debug build type",
+            "toolchainFile": "/usr/lib/emscripten/cmake/Modules/Platform/Emscripten.cmake",
             "inherits": "base",
             "cacheVariables": {
+                "CMAKE_CROSSCOMPILING_EMULATOR": "/usr/bin/node",
                 "CPM_smplxpp_SOURCE": "${sourceDir}/../smplxpp",
                 "CMAKE_BUILD_TYPE": "Debug"
             }

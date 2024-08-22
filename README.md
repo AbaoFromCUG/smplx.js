@@ -14,14 +14,13 @@
 ### Get started
 
 ```typescript
-
 import fs from 'node:fs/promises';
-import loader, { Gender } from "smplx";
+import loader, { Gender } from 'smplx';
 
-const loadFileTo = async (sourcePath: string, targetPath: string) => {
+async function loadFileTo(sourcePath: string, targetPath: string) {
   const data = await fs.readFile(sourcePath);
   FS.createDataFile('/', targetPath, data, true, true, true);
-};
+}
 const path = 'name';
 const uvPath = 'uv.txt';
 const outputPath = '/output.obj';
@@ -38,7 +37,7 @@ const content = FS.readFile(outputPath) as Uint32Array;
 const decoder = new TextDecoder();
 
 const str = decoder.decode(content);
-console.log(str)
+console.log(str);
 
 body.delete();
 model.delete();

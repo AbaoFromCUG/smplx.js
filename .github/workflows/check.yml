@@ -21,20 +21,29 @@ jobs:
             **/node_modules
           key: cpm-node-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake', '**/yarn.lock') }}
 
-      - uses: mymindstorm/setup-emsdk@v10
+      - name: setup emsdk
+        uses: mymindstorm/setup-emsdk@v14
+
+      - name: setup ninja
+        uses: ashutoshvarma/setup-ninja@master
         with:
-          version: 2.0.31
+          version: 1.12.1
 
-      - name: Install C++/CMake style checkers
-        run: pip3 install clang-format==14.0.6 cmake_format==0.6.11 pyyaml
+      - name: install C++/CMake style checkers
+        run: pip3 install clang-format==18.1.8 cmake_format==0.6.13 pyyaml
 
-      - name: install
+      - name: setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: pnpm install
         env:
           CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
-        run: yarn install
+        run: pnpm install
 
       - name: test
-        run: yarn run test
+        run: pnpm test
 
       - name: check style
-        run: yarn run check:style
+        run: pnpm lint

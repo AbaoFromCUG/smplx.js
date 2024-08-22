@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
-import { describe, expect, test } from 'vitest';
-import loader, { Gender } from "smplx";
+import { expect, test } from 'vitest';
+import loader from 'smplx';
 
 test('load smplx', async () => {
   const { Gender, Model, Body, FS } = await loader();
