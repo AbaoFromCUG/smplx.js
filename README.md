@@ -76,3 +76,8 @@ The following command will run prettier on the TypeScript and clang-format on th
 ```shell
 pnpm run lint:fix
 ```
+
+# Acknowledges
+
+- [smplxpp](https://github.com/sxyu/smplxpp): super fast SMPL/+H/-X implementation in C++, with CUDA support and a built-in OpenGL renderer
+- [modern-wasm-starter](https://github.com/TheLartians/modern-wasm-starter): A starter template to easily create WebAssembly packages for npm using type-safe C++ code with automatic declarations

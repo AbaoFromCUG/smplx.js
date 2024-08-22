@@ -7,7 +7,7 @@
     "type": "module",
     "repository": {
         "type": "git",
-        "url": "https://github.com/AbaoFromCUG/smplx-wasm.git"
+        "url": "git+https://github.com/AbaoFromCUG/smplx.js.git"
     },
     "exports": {
         ".": {
