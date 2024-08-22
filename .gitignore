@@ -1,0 +1,14 @@
+/build
+/node_modules
+/cpm_modules
+/dist
+/.vscode
+/glue/*.d.ts
+/glue/*.js
+/glue/*.wasm
+/glue/*.js.map
+/compile_commands.json
+/.cache
+data/models
+/smpl/
+*.obj

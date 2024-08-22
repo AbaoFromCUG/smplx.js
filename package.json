@@ -1,0 +1,37 @@
+{
+    "name": "smplx",
+    "version": "0.0.1",
+    "description": "A wasm implement of SMPL-X",
+    "author": "Abao Zhang",
+    "license": "MIT",
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/AbaoFromCUG/smplx-wasm.git"
+    },
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "prepare": "npm run build",
+        "build": "emcmake cmake --preset release && cmake --build --preset release",
+        "build:debug": "emcmake cmake --preset debug && cmake --build --preset debug",
+        "lint": "eslint . ",
+        "lint:fix": "eslint --fix .",
+        "watch": "vitest watch",
+        "test": "vitest run"
+    },
+    "devDependencies": {
+        "@antfu/eslint-config": "^2.27.0",
+        "eslint": "^9.9.0",
+        "typescript": "^5.5.4",
+        "vite": "^5.4.2",
+        "vitest": "^2.0.5"
+    }
+}
