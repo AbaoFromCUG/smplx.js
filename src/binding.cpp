@@ -20,25 +20,37 @@ void bindModel(const char *modelName, const char *bodyName)
 {
     using M = Model<ModelConfig>;
     using B = Body<ModelConfig>;
-    class_<M>(modelName).constructor<std::string, std::string, Gender>().function("n_uv_verts",
-                                                                                  &M::n_uv_verts);
+    // clang-format off
+    class_<M>(modelName)
+        .constructor<std::string, std::string, Gender>()
+        .function("n_uv_verts", &M::n_uv_verts)
+        .template property<val>("faces",
+            [](const M &self) {
+                return val(typed_memory_view<unsigned int>(self.faces.size(), self.faces.data()));
+            })
+        .template property<val>("uv",
+            [](const M &self) {
+                return val(typed_memory_view<float>(self.uv.size(), self.uv.data()));
+            })
+    ;
+
     class_<B>(bodyName)
-            .constructor<const M &, bool>()
-            .function("saveObj", &B::save_obj)
-            .function("setRandom", &B::set_random)
-            .template property<DDM>(
-                    "pose", [](const B &self) { return DDM(self.pose()); },
-                    [](B &self, const DDM &matrix) { self.pose() = matrix.data; })
-            .template property<DDM>(
-                    "shape", [](const B &self) { return DDM(self.shape()); },
-                    [](B &self, const DDM &matrix) { self.shape() = matrix.data; })
-            .template property<val>("verts",
-                                    [](const B &self) {
-                                        size_t size = self.verts().size();
-                                        const float *ptr = self.verts().data();
-                                        return val(typed_memory_view<float>(size, ptr));
-                                    })
-            .function("update", &B::update);
+        .constructor<const M &, bool>()
+        .function("saveObj", &B::save_obj)
+        .function("setRandom", &B::set_random)
+        .template property<DDM>("pose",
+            [](const B &self) { return DDM(self.pose()); },
+            [](B &self, const DDM &matrix) { self.pose() = matrix.data; })
+        .template property<DDM>("shape",
+            [](const B &self) { return DDM(self.shape()); },
+            [](B &self, const DDM &matrix) { self.shape() = matrix.data; })
+        .template property<val>("verts",
+            [](const B &self) {
+                return val(typed_memory_view<float>(self.verts().size(), self.verts().data()));
+            })
+        .function("update", &B::update)
+    ;
+    // clang-format on
 }
 
 EMSCRIPTEN_BINDINGS(smplx_wasm)
@@ -46,7 +58,7 @@ EMSCRIPTEN_BINDINGS(smplx_wasm)
 
     emscripten::register_vector<float>("Vector");
     emscripten::register_vector<std::vector<float>>("Vector2d");
-    class_<DDM>("Matrix") // TODO: rename
+    class_<DDM>("Matrix")
             .constructor<int, int>()
             .constructor<const DDM &>()
             .class_function("identity", &DDM::identity)

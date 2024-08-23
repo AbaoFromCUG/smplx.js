@@ -54,9 +54,11 @@ add_executable(smplx src/binding.cpp)
 target_link_options(
     smplx
     PRIVATE
-    -sMODULARIZE
-    # -sFORCE_FILESYSTEM
+    -sMODULARIZE=1
+    -sEXPORT_ES6=1
+    -sEXPORT_NAME="smplx"
     -sALLOW_MEMORY_GROWTH
+    -sNO_DISABLE_EXCEPTION_CATCHING
     "-sEXPORTED_RUNTIME_METHODS=['FS']"
     --bind
     --emit-tsd

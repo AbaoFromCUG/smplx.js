@@ -7,6 +7,7 @@ export default antfu({
   },
   typescript: true,
   jsonc: false,
+  vue: true,
 }, {
   rules: {
     // 'no-console': 'off',
