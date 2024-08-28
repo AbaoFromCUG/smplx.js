@@ -65,6 +65,7 @@ EMSCRIPTEN_BINDINGS(smplx_wasm)
     emscripten::register_vector<float>("Vector");
     emscripten::register_vector<std::vector<float>>("Vector2d");
     emscripten::register_type<Float32Memory>("Float32Array");
+    emscripten::register_type<Int32Memory>("Int32Array");
 
     enum_<Gender>("Gender")
             .value("unknown", Gender::unknown)
