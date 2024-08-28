@@ -109,7 +109,7 @@ EMSCRIPTEN_BINDINGS(smplx_wasm)
             .value("neutral", Gender::neutral)
             .value("male", Gender::male)
             .value("female", Gender::female);
-    bindModel<model_config::SMPL>("Model", "Body");
+    bindModel<model_config::SMPL_v1>("Model", "Body");
     bindModel<model_config::SMPLH>("ModelH", "BodyH");
     bindModel<model_config::SMPLX>("ModelX", "BodyX");
     bindModel<model_config::SMPLXpca>("ModelXpca", "BodyXpca");
