@@ -6,14 +6,14 @@
 #include <smplx/smplx.hpp>
 #include <string>
 
-#include "DenseMatrix.h"
 #include "smplx/defs.hpp"
 
 using namespace emscripten;
 using namespace smplx;
 using namespace std;
 
-using DDM = DenseMatrix<float>;
+EMSCRIPTEN_DECLARE_VAL_TYPE(Float32Memory)
+EMSCRIPTEN_DECLARE_VAL_TYPE(Int32Memory)
 
 template <typename ModelConfig>
 void bindModel(const char *modelName, const char *bodyName)
@@ -24,11 +24,11 @@ void bindModel(const char *modelName, const char *bodyName)
     class_<M>(modelName)
         .constructor<std::string, std::string, Gender>()
         .function("n_uv_verts", &M::n_uv_verts)
-        .template property<val>("faces",
+        .template property<Int32Memory>("faces",
             [](const M &self) {
                 return val(typed_memory_view<unsigned int>(self.faces.size(), self.faces.data()));
             })
-        .template property<val>("uv",
+        .template property<Float32Memory>("uv",
             [](const M &self) {
                 return val(typed_memory_view<float>(self.uv.size(), self.uv.data()));
             })
@@ -38,13 +38,19 @@ void bindModel(const char *modelName, const char *bodyName)
         .constructor<const M &, bool>()
         .function("saveObj", &B::save_obj)
         .function("setRandom", &B::set_random)
-        .template property<DDM>("pose",
-            [](const B &self) { return DDM(self.pose()); },
-            [](B &self, const DDM &matrix) { self.pose() = matrix.data; })
-        .template property<DDM>("shape",
-            [](const B &self) { return DDM(self.shape()); },
-            [](B &self, const DDM &matrix) { self.shape() = matrix.data; })
-        .template property<val>("verts",
+        .template property<Float32Memory>("pose",
+            [](const B &self) {
+                return val(typed_memory_view<float>(self.pose().size(), self.pose().data()));
+            })
+        .template property<Float32Memory>("shape",
+            [](const B &self) {
+                return val(typed_memory_view<float>(self.shape().size(), self.shape().data()));
+            })
+        .template property<Float32Memory>("joints",
+            [](const B &self) {
+                return val(typed_memory_view<float>(self.joints().size(), self.joints().data()));
+            })
+        .template property<Float32Memory>("verts",
             [](const B &self) {
                 return val(typed_memory_view<float>(self.verts().size(), self.verts().data()));
             })
@@ -58,51 +64,7 @@ EMSCRIPTEN_BINDINGS(smplx_wasm)
 
     emscripten::register_vector<float>("Vector");
     emscripten::register_vector<std::vector<float>>("Vector2d");
-    class_<DDM>("Matrix")
-            .constructor<int, int>()
-            .constructor<const DDM &>()
-            .class_function("identity", &DDM::identity)
-            .class_function("ones", &DDM::ones)
-            .class_function("constant", &DDM::constant)
-            .class_function("random", &DDM::random)
-            .class_function("diagonal", &DDM::diagonal)
-            .class_function("fromVector", &DDM::fromVector)
-            .function("transpose", &DDM::transpose)
-            .function("transposeSelf", &DDM::transposeSelf)
-            .function("inverse", &DDM::inverse)
-            .function("rows", &DDM::rows)
-            .function("cols", &DDM::cols)
-            .function("norm", &DDM::norm)
-            .function("normSqr", &DDM::normSqr)
-            .function("l1Norm", &DDM::l1Norm)
-            .function("lInfNorm", &DDM::lInfNorm)
-            .function("rank", &DDM::rank)
-            .function("det", &DDM::det)
-            .function("sum", &DDM::sum)
-            .function("block", &DDM::block)
-            .function("setBlock", &DDM::setBlock)
-            .function("mul", &DDM::mul)
-            .function("mulSelf", &DDM::mulSelf)
-            .function("div", &DDM::div)
-            .function("divSelf", &DDM::divSelf)
-            .function("matAdd", &DDM::matAdd, allow_raw_pointers())
-            .function("matAddSelf", &DDM::matAddSelf, allow_raw_pointers())
-            .function("matSub", &DDM::matSub, allow_raw_pointers())
-            .function("matSubSelf", &DDM::matSubSelf, allow_raw_pointers())
-            .function("matMul", &DDM::matMul, allow_raw_pointers())
-            .function("matMulSelf", &DDM::matMulSelf, allow_raw_pointers())
-            .function("get", &DDM::get)
-            .function("set", &DDM::set)
-            .function("hcat", &DDM::hcat, allow_raw_pointers())
-            .function("vcat", &DDM::vcat, allow_raw_pointers())
-            .function("print", &DDM::print)
-            .function("clamp", &DDM::clamp)
-            .function("clampSelf", &DDM::clampSelf)
-            // Vector ops
-            .function("length", &DDM::length)
-            .function("vGet", &DDM::vGet)
-            .function("vSet", &DDM::vSet)
-            .function("dot", &DDM::dot);
+    emscripten::register_type<Float32Memory>("Float32Array");
 
     enum_<Gender>("Gender")
             .value("unknown", Gender::unknown)
@@ -110,6 +72,7 @@ EMSCRIPTEN_BINDINGS(smplx_wasm)
             .value("male", Gender::male)
             .value("female", Gender::female);
     bindModel<model_config::SMPL_v1>("Model", "Body");
+    bindModel<model_config::SMPL>("Model_shape300", "Body_shape300");
     bindModel<model_config::SMPLH>("ModelH", "BodyH");
     bindModel<model_config::SMPLX>("ModelX", "BodyX");
     bindModel<model_config::SMPLXpca>("ModelXpca", "BodyXpca");

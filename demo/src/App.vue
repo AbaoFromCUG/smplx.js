@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { DatBoolean, DatButton, DatColor, DatFolder, DatGui, DatNumber, DatSelect, DatString } from '@cyrilf/vue-dat-gui';
-import { computed, onMounted, reactive, ref, watch, watchEffect } from 'vue';
+import { DatButton, DatColor, DatFolder, DatGui, DatNumber, DatSelect } from '@cyrilf/vue-dat-gui';
+import { onMounted, ref, watchEffect } from 'vue';
 import type { Body, Model } from 'smplx';
 import loadSMPLX from 'smplx';
 import '@cyrilf/vue-dat-gui/dist/style.css';
 
 const canvas = ref<HTMLCanvasElement>();
 
-const textureLoader = new THREE.TextureLoader();
+// const textureLoader = new THREE.TextureLoader();
 const scene = new THREE.Scene();
 const geometry = new THREE.BufferGeometry();
 
@@ -57,13 +57,7 @@ watchEffect(() => {
     shape10.value,
   ];
   if (model && body) {
-    const rawShape = body.shape;
-    for (let i = 0; i < shape.length; i++) {
-      rawShape.set(i, 0, shape[i]);
-    }
-    body.shape = rawShape;
-    body.shape.print('shape');
-    // body.update()
+    body.shape.set(shape);
     body.update(false, true);
 
     geometry.attributes.position.needsUpdate = true;
@@ -87,7 +81,7 @@ const materials = [
 
 const material = ref('color');
 
-const textureMaterial = new THREE.MeshBasicMaterial({ transparent: true });
+// const textureMaterial = new THREE.MeshBasicMaterial({ transparent: true });
 
 watchEffect(async () => {
   // textureMaterial.map = await textureLoader.loadAsync(`data/textures/${}.png`)
@@ -108,13 +102,7 @@ onMounted(async () => {
 
   model = new Model(path, uvPath, Gender.female);
   body = new Body(model, true);
-  // body.setRandom();
-  console.log(body.pose.rows(), body.pose.cols());
-  console.log(body.shape.rows(), body.shape.cols());
-  body.pose.set(9, 0, 0.125);
-  // body.shape.set(1, 0, 0.5);
-  body.pose.print('pose');
-  body.shape.print('shape');
+  body.pose[12] = 1;
 
   body.update(true, true);
   const width = canvas.value!.clientWidth;
